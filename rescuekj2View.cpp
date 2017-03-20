@@ -6,7 +6,9 @@
 
 #include "rescuekj2Doc.h"
 #include "rescuekj2View.h"
-
+#include <iostream>
+#include <cstring>
+using namespace std;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -29,15 +31,10 @@ BEGIN_MESSAGE_MAP(CRescuekj2View, CFormView)
 	ON_COMMAND(IDC_SET, OnTuCengSet)
 	ON_WM_TIMER()
 	ON_WM_SIZE()
-	ON_CBN_SELCHANGE(IDC_COMBO_PORT, OnSelchangeComboPort)
-	ON_CBN_SELCHANGE(IDC_COMBO_BOTE, OnSelchangeComboBote)
-	ON_CBN_SELCHANGE(IDC_COMBO_DATA, OnSelchangeComboData)
-	ON_CBN_SELCHANGE(IDC_COMBO_STOP, OnSelchangeComboStop)
-	ON_CBN_SELCHANGE(IDC_COMBO_JIAOYAN, OnSelchangeComboJiaoyan)
-	ON_BN_CLICKED(IDC_BUTTON_OPEN, OnPortOpen)
-	ON_COMMAND(IDC_CESHI, OnCeshi)
+	//ON_COMMAND(IDC_CESHI, OnCeshi)
 	ON_COMMAND(IDC_JIANTOU, OnJiantou)
 	ON_COMMAND(ID_APP_EXIT, OnAppExit)
+	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB1, OnSelchangeTab)
 	//}}AFX_MSG_MAP
 	// Standard printing commands
 	ON_COMMAND(ID_FILE_PRINT, CFormView::OnFilePrint)
@@ -53,11 +50,6 @@ CRescuekj2View::CRescuekj2View()
 {
 	//{{AFX_DATA_INIT(CRescuekj2View)
 	m_strRXData = _T("");
-	m_Index = -1;
-	m_BaudRate = -1;
-	m_Date_Select = -1;
-	m_StopBit = -1;
-	m_ParityCheck = -1;
 	//}}AFX_DATA_INIT
 	// TODO: add construction code here
 
@@ -72,19 +64,11 @@ void CRescuekj2View::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX,IDC_MAP1,m_ctrlMapX);
+	CRescuekj2App *spp = (CRescuekj2App *)AfxGetApp();
 	//{{AFX_DATA_MAP(CRescuekj2View)
-	DDX_Control(pDX, IDC_COMBO_JIAOYAN, m_ParityCheck_M);
-	DDX_Control(pDX, IDC_COMBO_STOP, m_StopBit_M);
-	DDX_Control(pDX, IDC_COMBO_DATA, m_Date_Select_M);
-	DDX_Control(pDX, IDC_COMBO_BOTE, m_BaudRate_M);
-	DDX_Control(pDX, IDC_COMBO_PORT, m_ComboBox);
-	DDX_Control(pDX, IDC_MSCOMM1, m_ctrlComm);
+	DDX_Control(pDX, IDC_TAB1, m_tab);
+	DDX_Control(pDX, IDC_MSCOMM1, spp->m_ctrlComm);
 	DDX_Text(pDX, IDC_EDIT_HISTORYMEG, m_strRXData);
-	DDX_CBIndex(pDX, IDC_COMBO_PORT, m_Index);
-	DDX_CBIndex(pDX, IDC_COMBO_BOTE, m_BaudRate);
-	DDX_CBIndex(pDX, IDC_COMBO_DATA, m_Date_Select);
-	DDX_CBIndex(pDX, IDC_COMBO_STOP, m_StopBit);
-	DDX_CBIndex(pDX, IDC_COMBO_JIAOYAN, m_ParityCheck);
 	//}}AFX_DATA_MAP
 }
 
@@ -118,44 +102,50 @@ void CRescuekj2View::OnInitialUpdate()
 	m_ctrlMapX.SetZoom(500);//设置初始缩放大小
 	CWnd *pWnd;  
 	pWnd = GetDlgItem(IDC_EDIT_HISTORYMEG);    //根据控件ID号获取控件指针，此处为历史显示框
-	pWnd->MoveWindow(cx-350,cy-350,320,338,TRUE);    //前两个为起始点，后两个为宽度和高度 
+	pWnd->MoveWindow(cx-350,cy-320,320,308,TRUE);    //前两个为起始点，后两个为宽度和高度 
 	pWnd = GetDlgItem(IDC_STATIC_HISTORY);    //此处为历史消息
-	pWnd->MoveWindow(cx-350,cy-375,70,30,TRUE);    
+	pWnd->MoveWindow(cx-350,cy-345,70,30,TRUE);    
 
+	m_ctrlMapX.GetLayers().CreateLayer("tmplayer",NULL,1);//建立目标点层
+	lyr = m_ctrlMapX.GetLayers().Item("tmplayer");
+	m_ctrlMapX.GetLayers().SetAnimationLayer(lyr);
+	
+	m_traceLayer = m_ctrlMapX.GetLayers().CreateLayer("guiji",NULL, 2);//建立目标轨迹层
+	m_ctrlMapX.GetLayers().SetAnimationLayer(m_traceLayer);
+	m_traceLayer.SetSelectable(FALSE);
+	m_traceLayer.SetDrawLabelsAfter(TRUE);//影响标注刷新的关键
 
+		m_tab.InsertItem(0, _T("串口设置"));
+		m_tab.InsertItem(1, _T("功率检测"));
+		m_tab.InsertItem(2, _T("身体状况"));
+		//设定在Tab内显示的范围
+		CRect rc;
+		m_tab.GetClientRect(rc);////获得TAB控件的坐标
+		//定位选项卡页的位置，这里可以根据情况自己调节偏移量
+		rc.top += 30;
+		rc.bottom -= 0;
+		rc.left += 0;
+		rc.right -= 0;
+		//创建两个对话框
+		m_page1.Create(IDD_PORT, &m_tab);//&m_tab也可以改成Tab的ID
+		m_page2.Create(IDD_GONGLV, &m_tab);
+		m_page3.Create(IDD_INFO, &m_tab);
+		//将子页面移动到指定的位置
+		m_page1.MoveWindow(&rc);
+		m_page2.MoveWindow(&rc);
+		m_page3.MoveWindow(&rc);
+		//显示子页面
+		//显示初始页面
+		m_page1.ShowWindow(SW_SHOW);
+		m_page2.ShowWindow(SW_HIDE);
+		m_page3.ShowWindow(SW_HIDE);
+		//保存当前选择
+		//m_CurSelTab = 0;
+		m_tab.SetCurSel(0);
 
-	/*****      下面用于选择初始值和打开串口        ******/
-
-	m_ComboBox.SetCurSel(0);//打开软件时串口选择框默认显示COM1	
-	m_BaudRate_M.SetCurSel(3);//打开软件时波特率选择框默认显示9600
-	m_Date_Select_M.SetCurSel(0);//打开软件时数据位选择框默认显示8
-	m_StopBit_M.SetCurSel(0);//打开软件时停止位选择框默认显示1
-	m_ParityCheck_M.SetCurSel(0);//打开软件时奇偶校验选择框默认显示无校验N
-	//下面if语句用于打开默认串口
-/************************************************************/
-	if(m_ctrlComm.GetPortOpen())
-		{
-			m_ctrlComm.SetPortOpen(FALSE);//关闭串口
-		}		
-	m_ctrlComm.SetCommPort(1);//打开软件时默认使用COM1串口
-	if(!m_ctrlComm.GetPortOpen())
-		{
-		m_ctrlComm.SetPortOpen(TRUE);//打开串口
-		}		
-	else
-		{
-		AfxMessageBox("cannot open serial port");
-		}
-			//默认设置打开
-	m_ctrlComm.SetSettings("9600,n,8,1");//打开软件时端口设置默认为波特率9600，无校验位，8位数据，1位停止位
-	m_ctrlComm.SetInputMode(1); //1：表示以二进制方式检取数据
-	m_ctrlComm.SetRThreshold(1); //参数1表示每当串口接收缓冲区中有多于或等于1个字符时将引发一个接收数据的OnComm事件
-	m_ctrlComm.SetInputLen(0); //设置当前接收区数据长度为0
-	m_ctrlComm.GetInput();//先预读缓冲区以清除残留数据
-
-	SetDlgItemText(IDC_BUTTON_OPEN,"关闭串口");
-	/********     串口设置到此结束      **********/
-
+		for(int i=0;i<50;i++)
+			book[i]=0;
+			
 
 	/*****    获得所有控件    ********/
 	CRect rectWnd;
@@ -169,8 +159,18 @@ void CRescuekj2View::OnInitialUpdate()
         pWndChild=pWndChild->GetNextWindow();
 	}
 	/******   控件获取到此结束    *******/
+
+	/*****      下面用于选择初始值和打开串口        ******/
+	m_page1.Oninitial();	//必须放到次对话框创建后
+	m_page2.Initial_gonglv();
+	m_page3.Initial();
+	/********     串口设置到此结束      **********/
+
 	myAccess.OnInitADOConn();			//连接数据库
-	myAccess.Openace();			//打开相应的表
+	myAccess.Openace();
+
+	SetTimer(ID_TIMER_FLASH,1000,NULL);//打开定时器
+
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -267,6 +267,7 @@ void CRescuekj2View::OnTuCengSet() //图层设置
 void CRescuekj2View::OnTimer(UINT nIDEvent) //定时器函数
 {
 	// TODO: Add your message handler code here and/or call default
+
 	if(ID_TIMER_FLASH==nIDEvent)
 	{
 		m_bFlash=!m_bFlash;
@@ -280,61 +281,72 @@ void CRescuekj2View::OnTimer(UINT nIDEvent) //定时器函数
 			m_ctrlMapX.GetLayers().Item(1).GetSelection().ClearSelection();
 		}
 	}
-		xt.GetParts().Item(1).AddXY(yg, xg);//画轨迹
-		yg=yg-0.1;
-		xg=xg-0.1;
-		xt.Update();
 	CFormView::OnTimer(nIDEvent);
 }
 
-void CRescuekj2View::OnCeshi() 
+void CRescuekj2View::guiji(int id,double y,double x,double yg,double xg)
+{
+	CMapXFeature ft;
+	ft=lyr.AllFeatures().Item(id);
+	ft.Offset(y-yg,x-xg);
+	
+	xt.GetParts().Item(id).AddXY(y, x);//画轨迹
+
+	ft.Update();
+	xt.Update();
+}
+void CRescuekj2View::guiji_initial(int id,double y0,double x0,double y1,double x1) 
 {
 	// TODO: Add your command handler code here
-	CMapXLayer lyr,m_traceLayer;
-	//CMapXPoint pt;
-	CMapXFeature ft,st;
+	
 	//CMapXFeatures ftr;
-	CString lyrName;
+	//CString lyrName;
 	//CMapXFeatureFactory ffy;
-	double x,y;
-	x=32.32;
+	/*x=32.32;
 	y=119.52;
-	yg=119.3;
-	xg=32.3;
-	m_ctrlMapX.GetLayers().CreateLayer("tmplayer",NULL,1);
+	yg=y;
+	xg=x;
+	m_ctrlMapX.GetLayers().CreateLayer("tmplayer",NULL,1);//建立目标点层
 	lyr = m_ctrlMapX.GetLayers().Item("tmplayer");
 	m_ctrlMapX.GetLayers().SetAnimationLayer(lyr);
-	//建立目标轨迹层
-	m_traceLayer = m_ctrlMapX.GetLayers().CreateLayer("guiji",NULL, 2);
+	
+	m_traceLayer = m_ctrlMapX.GetLayers().CreateLayer("guiji",NULL, 2);//建立目标轨迹层
 	m_ctrlMapX.GetLayers().SetAnimationLayer(m_traceLayer);
 	m_traceLayer.SetSelectable(FALSE);
 	m_traceLayer.SetDrawLabelsAfter(TRUE);//影响标注刷新的关键
-	/*到此*/
 
+
+
+	CMapXFeature ft,st;
 try
 {
 	if (ft.CreateDispatch(ft.GetClsid()))
 	{
-		/*******    在指定经纬度显示      *****/
 		ft.Attach(m_ctrlMapX.GetDispatch());
 		ft = m_ctrlMapX.GetFeatureFactory().CreateSymbol();
 		CMapXStyle s = ft.GetStyle();
 		s.SetSymbolType(miSymbolTypeBitmap);
-		s.SetSymbolBitmapSize(8);  
+		s.SetSymbolBitmapSize(8);  //飞机大小
 		s.SetSymbolBitmapTransparent(true);
 		s.SetSymbolBitmapName("STOP1-32.bmp");
 		ft.SetStyle(s);
 		ft.GetPoint().Set(y,x);
 		st=lyr.AddFeature(ft);
-		//lyr.Refresh();
 		st.Update();
-		guiji(117,30);
-		
-		myAccess.Chaxun();		//显示轨迹
-	/**********       画轨迹       *******/
+	}
+	else
+	{
+	AfxThrowOleException(CO_E_CLASS_CREATE_FAILED);
+	}
+	*/
+	
+		//guiji(117,30);
 
-		CMapXFeature gt;
-		gt.CreateDispatch(ft.GetClsid());
+	/**********       画轨迹       *******/
+try
+{
+		CMapXFeature gt,ft;
+		gt.CreateDispatch(gt.GetClsid());
 	    gt.Attach(m_ctrlMapX.GetDispatch(FALSE));
 	    gt.SetType(miFeatureTypeLine);
 	    gt.GetStyle().SetLineColor(miColorRed);
@@ -343,20 +355,19 @@ try
 	    CMapXPoints pts;
 	    pts.CreateDispatch(pts.GetClsid());
 	    //加入坐标数据
-	    pts.AddXY(119.5, 32.5);
-	    pts.AddXY(119.4, 32.4);
+	    pts.AddXY(y0, x0);
+	    pts.AddXY(y1, x1);
 	    gt.GetParts().Add(pts);
 	    //加入到目标图层
 	    xt=m_traceLayer.AddFeature((LPDISPATCH)gt); 
+
+		ft=lyr.AllFeatures().Item(id);
+		ft.Offset(y1-y0,x1-x0);
+		ft.Update();
+
 		xt.Update();
    /*************      到此     **************/
-	//	SetTimer(ID_TIMER_FLASH,1000,NULL);//打开定时器
 
-	}
-	else
-	{
-	AfxThrowOleException(CO_E_CLASS_CREATE_FAILED);
-	}
 }
 
 catch (COleDispatchException *e)
@@ -371,8 +382,9 @@ catch (COleException *e)
 	}	
 }
 
-void CRescuekj2View::guiji(double y, double x)
+void CRescuekj2View::biaodian(double y, double x)
 {
+	/*
 	CMapXLayer lyr;
 	lyr = m_ctrlMapX.GetLayers().Item("tmplayer");
 	CMapXFeature ft,fr,fs;
@@ -380,13 +392,41 @@ void CRescuekj2View::guiji(double y, double x)
 	fr=ft.Clone();
 	fr.GetPoint().Set(y,x);
 	fs=lyr.AddFeature(fr);
-	//lyr.Refresh();
 	fs.Update();
+	*/
+	CMapXFeature ft,st;
+try
+{
+	if (ft.CreateDispatch(ft.GetClsid()))
+	{
+		ft.Attach(m_ctrlMapX.GetDispatch());
+		ft = m_ctrlMapX.GetFeatureFactory().CreateSymbol();
+		CMapXStyle s = ft.GetStyle();
+		s.SetSymbolType(miSymbolTypeBitmap);
+		s.SetSymbolBitmapSize(8);  //飞机大小
+		s.SetSymbolBitmapTransparent(true);
+		s.SetSymbolBitmapName("STOP1-32.bmp");
+		ft.SetStyle(s);
+		ft.GetPoint().Set(y,x);
+		st=lyr.AddFeature(ft);
+		st.Update();
+	}
+}
+catch (COleDispatchException *e)
+	{
+	e->ReportError();
+	e->Delete();
+	}
+catch (COleException *e)
+	{
+	e->ReportError();
+	e->Delete();
+	}	
 }
 void CRescuekj2View::OnSize(UINT nType, int cx, int cy) 
 {
 	CFormView::OnSize(nType, cx, cy);
- if (listRect.GetCount()>0)//看链表是否为空
+	if(listRect.GetCount()>0)//看链表是否为空
         {
             CRect rectDlgNow;
             GetWindowRect(&rectDlgNow);//得到当前对话框的坐标
@@ -426,18 +466,21 @@ END_EVENTSINK_MAP()
 
 void CRescuekj2View::OnCommMscomm1() 
 {
+
 	// TODO: Add your control notification handler code here
 	VARIANT variant_inp;//定义一个VARIANT类对象
 	COleSafeArray safearray_inp;//定义一个COleSafeArray对象
 	LONG len,k;
 	BYTE rxdata[2048];//设置BYTE数组 AN 8—intterthat is not signed.
+	char buf[50];
+	bool cha=false;
 	CString strtemp;
-//显示时间
+	//显示时间
 	time_t m_time;
 	tm *t;
 	int hour,min,sec;
 	int year, mon, day;
-	CString st;
+	CString name,strst;//str_receive,
 	time(&m_time); //获取当前时钟值
 	t=localtime(&m_time);  //转换为 tm 结构类型
 	hour=t->tm_hour;  //得到小时
@@ -447,15 +490,13 @@ void CRescuekj2View::OnCommMscomm1()
 	mon =t->tm_mon+1; //得到月份
 	day =t->tm_mday;  //得到日期
 
-	st.Format( " \n %4d 年%2d 月 %2d 日  %02d:%02d:%02d  " , year,mon,day,hour, min, sec);
-	m_strRXData=st;
-
-
-
-	if (m_ctrlComm.GetCommEvent()==2)//事件值为2表示接收缓冲区内有数据
+	//st.Format( "\n %4d 年%2d 月 %2d 日  %02d:%02d:%02d  " , year,mon,day,hour, min, sec);
+	strst.Format( "%4d/%2d/%2d  %02d:%02d:%02d ",year,mon,day,hour, min, sec);
+	CRescuekj2App *spp = (CRescuekj2App *)AfxGetApp();
+	if (spp->m_ctrlComm.GetCommEvent()==2)//事件值为2表示接收缓冲区内有数据
 	{
 		////以下你可以根据自己的通信协议加入处理代码
-		variant_inp=m_ctrlComm.GetInput();//读缓冲区
+		variant_inp=spp->m_ctrlComm.GetInput();//读缓冲区
 		safearray_inp=variant_inp;//VARIANT型变量转换为ColeSafeArray型变量
 		len=safearray_inp.GetOneDimSize();
 		for(k=0;k<len;k++)
@@ -468,204 +509,78 @@ void CRescuekj2View::OnCommMscomm1()
 			//if(m_ctrlHexSend.GetCheck())//如果是HEX显示则转为16进制
 			//	strtemp.Format("%02x ",bt);	//将16进制数送入临时变量strtemp存放
 			//	else
-				strtemp.Format("%c",bt);//将字符送入临时变量strtemp存放
-				m_strRXData+=strtemp;//加入接收编辑框对应字符串
-				}
-	}
-	UpdateData(FALSE);//更新编辑框内容（主要是接收编辑框中的）
-	//消息提示框
-		int num;
-		CString str,name,unit,position;
-		num=1005;
-		name="eric";
-		unit="university";
-		position="cadet";
-		str.Format(_T("收到求救信号来自：ID %d,姓名%s,单位%s，职务%s"),num,name,unit,position);
-		AfxMessageBox(str);
-}
-
-void CRescuekj2View::OnSelchangeComboPort() 
-{
-	// TODO: Add your control notification handler code here
-
-	m_Index=((CComboBox*)GetDlgItem(IDC_COMBO_PORT))->GetCurSel();//当前选中的行
-	/*
-	CString str;
-	str.Format(_T("%d"), m_Index);
-	AfxMessageBox(str);*/
-
-	((CComboBox*)GetDlgItem(IDC_COMBO_PORT))->SetCurSel(m_Index);//设置当前选中的行的内容为显示的内容
-	if(m_ctrlComm.GetPortOpen())//当要改变时则要先关闭串口才可以用按键进行打开，所以先判断当前串口是否打开
-		{//如果是打开的则先关闭
-		m_ctrlComm.SetPortOpen(FALSE);//关闭串口
-		}		
-	SetDlgItemText(IDC_BUTTON_OPEN,"打开串口");//将打开或关才按钮改为"打开串口"显示状态	
-}
-
-void CRescuekj2View::OnSelchangeComboBote() 
-{
-	// TODO: Add your control notification handler code here
-	UpdateData(true);
-	m_BaudRate=((CComboBox*)GetDlgItem(IDC_COMBO_BOTE))->GetCurSel();//当前选中的行	
-////***********************************************************/
-///根据当前选中的值进行波特率设置
-///************************************************************/
-	switch(m_BaudRate)
-	{	
-	case 1: m_ctrlComm.SetSettings("1200,,,");
-	break;
-	case 2: m_ctrlComm.SetSettings("2400,,,");
-	break;
-	case 3: m_ctrlComm.SetSettings("4800,,,");
-	break;
-	case 4: m_ctrlComm.SetSettings("9600,,,");
-	break;
-	case 5: m_ctrlComm.SetSettings("14400,,,");
-	break;
-	case 6: m_ctrlComm.SetSettings("19200,,,");
-	break;
-	case 7: m_ctrlComm.SetSettings("38400,,,");
-	break;
-	case 8: m_ctrlComm.SetSettings("576000,,,");
-	break;
-	default:m_ctrlComm.SetSettings("115200,,,");
-	break;
-	}
-//*************************************************////
-UpdateData(false);
-	
-}
-
-void CRescuekj2View::OnSelchangeComboData() 
-{
-	// TODO: Add your control notification handler code here
-	UpdateData(true);
-	m_Date_Select=((CComboBox*)GetDlgItem(IDC_COMBO_DATA))->GetCurSel();//当前选中的行
-	
-///*******************************************************************************/
-
-///********************************************************************************/
-switch(m_Date_Select)
-	{
-	case 1: m_ctrlComm.SetSettings(",,8,");
-	break;
-	case 2: m_ctrlComm.SetSettings(",,7,");
-	break;
-	case 3: m_ctrlComm.SetSettings(",,6,");
-	break;
-	case 4: m_ctrlComm.SetSettings(",,5,");
-	break;
-	default:m_ctrlComm.SetSettings(",,4,");
-	break;
-	
-	}
-//*********************************************************************************//
-	UpdateData(false);
-	
-}
-
-void CRescuekj2View::OnSelchangeComboStop() 
-{
-	// TODO: Add your control notification handler code here
-UpdateData(true);
-	m_StopBit=((CComboBox*)GetDlgItem(IDC_COMBO_STOP))->GetCurSel();//当前选中的行
-	
-///*******************************************************************************/
-
-///********************************************************************************/
-switch(m_StopBit)
-	{
-	case 1: m_ctrlComm.SetSettings(",,,1");
-	break;
-	default:m_ctrlComm.SetSettings(",,,2");
-	break;
-	}
-//*********************************************************************************//
-UpdateData(false);
-	
-}
-
-void CRescuekj2View::OnSelchangeComboJiaoyan() 
-{
-	// TODO: Add your control notification handler code here
-UpdateData(true);
-	m_ParityCheck=((CComboBox*)GetDlgItem(IDC_COMBO_JIAOYAN))->GetCurSel();//当前选中的行
-	
-///*******************************************************************************/
-
-///********************************************************************************/
-switch(m_ParityCheck)
-	{
-	case 1: m_ctrlComm.SetSettings(",J,,");
-	break;
-	case 2: m_ctrlComm.SetSettings(",O,,");
-	break;
-	default:m_ctrlComm.SetSettings(",N,,");
-	break;
-	
-	}
-//*********************************************************************************//
-	UpdateData(false);
-	
-}
-
-void CRescuekj2View::OnPortOpen() 
-{
-	// TODO: Add your control notification handler code here
-//检查是否改变默认的串口值，没有改变m_Index的值是0的，否则则不为0
-	if(m_Index<0)//串口的默认值没有改变	
-		{	
-			switch(m_ctrlComm.GetPortOpen())//点击打开或关闭串口按键时，根据当前串口是否打开进行相应操作
-			{
-			case 1:	
-
-					/**************************************************************/
-				
-					//当前串口是打开的则进行关串口操作
-					m_ctrlComm.SetPortOpen(FALSE);//关闭串口
-					SetDlgItemText(IDC_BUTTON_OPEN,"打开串口");//更改按键指示
-					UpdateData(FALSE);//更新按键状态
-					break;
-			case 0://当前串口是关闭的则进行开串口操作
-					m_ctrlComm.SetCommPort(1);//如果要打开串口则应先选择哪个串口
-					m_ctrlComm.SetPortOpen(TRUE);//打开串口
-					SetDlgItemText(IDC_BUTTON_OPEN,"关闭串口");//更改按键指示
-					UpdateData(FALSE);
-					break;
-			default : AfxMessageBox("cannot open or close serial port");	
+				buf[k]=bt;
+			//	strtemp.Format("%c",bt);//将字符送入临时变量strtemp存放
+			//	str_receive+=strtemp;//加入接收编辑框对应字符串
 			}
-		}
-	else//串口的默认值有改变
+	}
+	//消息提示框$GLJC
+	char *p=strstr(buf,"$GLZK");
+	char *q=strstr(buf,"$TXXX");
+	if(p!=NULL)
+	{
+		if(buf[7]==0x03&&buf[8]==0x00&&buf[9]==0x14)//判断用户机地址是否合法	
 		{
-		switch(m_ctrlComm.GetPortOpen())//点击打开或关闭串口按键时，根据当前串口是否打开进行相应操作
-			{
-			case 0://当前串口是关闭的则进行开串口操作	
-					m_ctrlComm.SetCommPort(m_Index+1);//如果要打开串口则应先选择哪个串口
-					m_ctrlComm.SetPortOpen(TRUE);//打开串口
-					SetDlgItemText(IDC_BUTTON_OPEN,"关闭串口");//更改按键指示					
-					UpdateData(FALSE);//更新按键状态
-					break;
-			case 1: 
-				
-					//当前串口是打开的则进行关串口操作					
-					m_ctrlComm.SetPortOpen(FALSE);
-					SetDlgItemText(IDC_BUTTON_OPEN,"打开串口");					
-					UpdateData(FALSE);
-					break;
-			default : AfxMessageBox("cannot open serial port");
-			}
+			int value[10];
+			for(int i=0;i<10;i++)
+				value[i]=buf[10+i];
+			m_page2.Show_gonglv(value);
 		}
-	if(m_Index<0)
-		((CComboBox*)GetDlgItem(IDC_COMBO_PORT))->SetCurSel(0);//如果没有另外进行串口选择则显示COM1
-	if(m_BaudRate<0)
-		((CComboBox*)GetDlgItem(IDC_COMBO_BOTE))->SetCurSel(3);//如果没有另外进行波特率选择则显示9600
-	if(m_Date_Select<0)
-		((CComboBox*)GetDlgItem(IDC_COMBO_DATA))->SetCurSel(0);////如果没有另外进行数据位选择则显示8
-	if(m_StopBit<0)
-		((CComboBox*)GetDlgItem(IDC_COMBO_STOP))->SetCurSel(0);//如果没有另外进行停止位选择则显示1
-	if(m_ParityCheck<0)
-		((CComboBox*)GetDlgItem(IDC_COMBO_JIAOYAN))->SetCurSel(0);//如果没有另外进行校验位选择则显示没有校验位N
+		else
+			AfxMessageBox("非法用户!");
+	}
+	else 
+		if(q!=NULL)
+	{
+		if(buf[7]==0x03&&buf[8]==0x00&&buf[9]==0x14)//判断用户机地址是否合法	
+		{
+			int id,bloodshou,bloodzh,beat,height;
+			double lgtd,latd,temper;
+			id=(unsigned char)buf[18]*256+(unsigned char)buf[19];
+			cha=myAccess.Chaxun(id,book[id]);
+		//	AfxMessageBox("测试!");
+			if(cha==true)
+			{
+			lgtd=((unsigned char)buf[22]/60.0+buf[21])/60+buf[20];
+			latd=((unsigned char)buf[26]/60.0+buf[25])/60+buf[24];
+			
+			if(book[id]==0)
+			{
+				biaodian(lgtd,latd);//在地图上标点
+				book[id]=1;
+			}
+			else if(book[id]==1)
+			{
+				guiji_initial(id,pre[id].y,pre[id].x,lgtd,latd);
+				book[id]=2;
+			}
+			else
+				guiji(id,lgtd,latd,pre[id].y,pre[id].x);
+
+			pre[id].y=lgtd;
+			pre[id].x=latd;
+
+			height=(unsigned char)buf[28]*256+(unsigned char)buf[29];
+			bloodshou=(unsigned char)buf[30];
+			bloodzh=(unsigned char)buf[31];
+			temper=30+0.1*buf[32];
+			beat=(unsigned char)buf[33];
+
+			name=spp->strname;
+			m_page3.Show_info(id,name,bloodshou,bloodzh,beat,temper);
+			myAccess.Write(id,strst,lgtd,latd,height,bloodshou,bloodzh,beat,temper);
+			}
+
+			strtemp.Format("ID: %d, 姓名: %s, 位置: %d°%d'%d \"E,  %d°%d'%d \"N",id,name,(unsigned char)buf[20],buf[21],buf[22],(unsigned char)buf[24],buf[25],buf[26]);
+			m_strRXData+=strst+strtemp+"\r\n";
+			UpdateData(FALSE);//更新编辑框内容(主要是接收编辑框中的)
+
+		}	
+	}
+	else
+	AfxMessageBox("非法用户!");
 }
+
 
 
 void CRescuekj2View::OnAppExit() 
@@ -673,4 +588,30 @@ void CRescuekj2View::OnAppExit()
 	// TODO: Add your command handler code here
 		myAccess.ExitConnect();				//关闭数据库
 		AfxGetMainWnd()->SendMessage(WM_CLOSE);
+}
+
+void CRescuekj2View::OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult) 
+{
+	// TODO: Add your control notification handler code here
+	
+	*pResult = 0;
+    switch (m_tab.GetCurSel())
+    {
+        case 0:
+            m_page1.ShowWindow(SW_SHOW);
+            m_page2.ShowWindow(SW_HIDE);
+			m_page3.ShowWindow(SW_HIDE);
+            break;
+        case 1:
+            m_page1.ShowWindow(SW_HIDE);
+            m_page2.ShowWindow(SW_SHOW);
+			m_page3.ShowWindow(SW_HIDE);
+
+            break;
+        case 2:
+			m_page1.ShowWindow(SW_HIDE);
+			m_page2.ShowWindow(SW_HIDE);
+			m_page3.ShowWindow(SW_SHOW);
+            break;
+    }
 }

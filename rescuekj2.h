@@ -13,6 +13,7 @@
 #endif
 
 #include "resource.h"       // main symbols
+#include "mscomm.h"
 /////////////////////////////////////////////////////////////////////////////
 // CRescuekj2App:
 // See rescuekj2.cpp for the implementation of this class
@@ -23,6 +24,8 @@ class CRescuekj2App : public CWinApp
 public:
 	CRescuekj2App();
 	 _RecordsetPtr    m_pRecordset; // √¸¡Ó
+	 CMSComm	m_ctrlComm;
+	 CString strname;
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CRescuekj2App)

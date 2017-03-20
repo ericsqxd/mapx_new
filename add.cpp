@@ -23,6 +23,14 @@ add::add(CWnd* pParent /*=NULL*/)
 	m_edit_name = _T("");
 	m_edit_group = _T("");
 	m_edit_job = _T("");
+	m_edit_age = _T("");
+	m_edit_sex = _T("");
+	m_edit_xuexing = _T("");
+	m_edit_phone1 = _T("");
+	m_edit_phone2 = _T("");
+	m_edit_phone3 = _T("");
+	m_edit_phone4 = _T("");
+	m_edit_phone5 = _T("");
 	//}}AFX_DATA_INIT
 }
 
@@ -35,6 +43,14 @@ void add::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT2_NAME, m_edit_name);
 	DDX_Text(pDX, IDC_EDIT3_GROUP, m_edit_group);
 	DDX_Text(pDX, IDC_EDIT4_JOB, m_edit_job);
+	DDX_Text(pDX, IDC_EDIT_AGE, m_edit_age);
+	DDX_Text(pDX, IDC_EDIT_SEX, m_edit_sex);
+	DDX_Text(pDX, IDC_EDIT_XUEXING, m_edit_xuexing);
+	DDX_Text(pDX, IDC_EDIT_PHONE1, m_edit_phone1);
+	DDX_Text(pDX, IDC_EDIT_PHONE2, m_edit_phone2);
+	DDX_Text(pDX, IDC_EDIT_PHONE3, m_edit_phone3);
+	DDX_Text(pDX, IDC_EDIT_PHONE4, m_edit_phone4);
+	DDX_Text(pDX, IDC_EDIT_PHONE5, m_edit_phone5);
 	//}}AFX_DATA_MAP
 }
 
@@ -61,6 +77,14 @@ void add::OnAddOK()
 	app->m_pRecordset->PutCollect(_variant_t("NAME"),_variant_t(m_edit_name));
 	app->m_pRecordset->PutCollect(_variant_t("UNIT"),_variant_t(m_edit_group));
 	app->m_pRecordset->PutCollect(_variant_t("POSITION"),_variant_t(m_edit_job));
+	app->m_pRecordset->PutCollect(_variant_t("SEX"),_variant_t(m_edit_sex));                  
+	app->m_pRecordset->PutCollect(_variant_t("AGE"),_variant_t(m_edit_age));
+	app->m_pRecordset->PutCollect(_variant_t("BLOODTYPE"),_variant_t(m_edit_xuexing));
+	app->m_pRecordset->PutCollect(_variant_t("PHONE1"),_variant_t(m_edit_phone1));
+	app->m_pRecordset->PutCollect(_variant_t("PHONE2"),_variant_t(m_edit_phone2));                  
+	app->m_pRecordset->PutCollect(_variant_t("PHONE3"),_variant_t(m_edit_phone3));
+	app->m_pRecordset->PutCollect(_variant_t("PHONE4"),_variant_t(m_edit_phone4));
+	app->m_pRecordset->PutCollect(_variant_t("PHONE5"),_variant_t(m_edit_phone5));
 	app->m_pRecordset->Update();//更新数据库-将新纪录存入数据库
 	AfxMessageBox("添加成功");
 

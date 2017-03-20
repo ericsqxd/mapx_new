@@ -9,6 +9,9 @@
 #define IDR_MAINFRAME                   128
 #define IDR_RESCUETYPE                  129
 #define IDD_DIALOG1                     130
+#define IDD_PORT                        133
+#define IDD_GONGLV                      135
+#define IDD_INFO                        137
 #define IDC_EDIT1_ID                    1000
 #define IDC_EDIT2_NAME                  1001
 #define IDC_EDIT3_GROUP                 1004
@@ -29,6 +32,22 @@
 #define IDC_BUTTON_OPEN                 1057
 #define IDC_STATIC_ALL                  1058
 #define IDC_CHECK1                      1060
+#define IDC_TAB1                        1061
+#define IDC_STATIC_SHOU                 1063
+#define IDC_STATIC_SHU                  1064
+#define IDC_STATIC_TEMP                 1065
+#define IDC_STATIC_BEAT                 1066
+#define IDC_STATIC_PINGGU               1067
+#define IDC_STATIC_ID                   1068
+#define IDC_STATIC_NAME                 1069
+#define IDC_EDIT_SEX                    1078
+#define IDC_EDIT_AGE                    1079
+#define IDC_EDIT_XUEXING                1080
+#define IDC_EDIT_PHONE1                 1081
+#define IDC_EDIT_PHONE2                 1082
+#define IDC_EDIT_PHONE3                 1083
+#define IDC_EDIT_PHONE4                 1084
+#define IDC_EDIT_PHONE5                 1085
 #define Move_Pan                        32771
 #define Zoom_In                         32772
 #define Zoom_Out                        32773
@@ -45,9 +64,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        133
+#define _APS_NEXT_RESOURCE_VALUE        138
 #define _APS_NEXT_COMMAND_VALUE         32793
-#define _APS_NEXT_CONTROL_VALUE         1061
+#define _APS_NEXT_CONTROL_VALUE         1086
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

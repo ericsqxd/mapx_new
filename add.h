@@ -25,6 +25,14 @@ public:
 	CString	m_edit_name;
 	CString	m_edit_group;
 	CString	m_edit_job;
+	CString	m_edit_age;
+	CString	m_edit_sex;
+	CString	m_edit_xuexing;
+	CString	m_edit_phone1;
+	CString	m_edit_phone2;
+	CString	m_edit_phone3;
+	CString	m_edit_phone4;
+	CString	m_edit_phone5;
 	//}}AFX_DATA
 
 

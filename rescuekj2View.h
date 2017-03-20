@@ -15,33 +15,38 @@
 #include "add.h"
 #include "stdafx.h"
 #include "AdoAccess1.h"
+#include "portset.h"
+#include "gonglv.h"
+#include "info.h"
 #include <time.h>
+
 
 class CRescuekj2View : public CFormView
 {
 protected: // create from serialization only
 	CRescuekj2View();
 	DECLARE_DYNCREATE(CRescuekj2View)
-	void CRescuekj2View::guiji(double y, double x);
+	void biaodian(double y, double x);
+	void guiji_initial(int id,double y0,double x0,double y1,double x1);
+	void guiji(int id,double y,double x,double yg,double xg);
 public:
 	BOOL m_bFlash;
+	portset m_page1; 
+	gonglv m_page2; 
+	info m_page3;
+	int book[50];
+	struct dian
+	{
+		double y;
+		double x;
+	}pre[50];
 	//{{AFX_DATA(CRescuekj2View)
 	enum { IDD = IDD_RESCUEKJ2_FORM };
-	CComboBox	m_ParityCheck_M;
-	CComboBox	m_StopBit_M;
-	CComboBox	m_Date_Select_M;
-	CComboBox	m_BaudRate_M;
-	CComboBox	m_ComboBox;
-	CMSComm	m_ctrlComm;
+	CTabCtrl	m_tab;
 	CString	m_strRXData;
-	int		m_Index;
-	int		m_BaudRate;
-	int		m_Date_Select;
-	int		m_StopBit;
-	int		m_ParityCheck;
 	//}}AFX_DATA
-
 // Attributes
+
 public:
 	CRescuekj2Doc* GetDocument();
 // Operations
@@ -72,7 +77,8 @@ protected:
 		CMapX m_ctrlMapX;
 		CList <CRect,CRect> listRect;
 		CMapXFeature xt;
-		double yg,xg;
+		CMapXLayer lyr,m_traceLayer;
+		//double yg,xg,x,y;
 		AdoAccess myAccess;
 // Generated message map functions
 protected:
@@ -86,15 +92,16 @@ protected:
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnCommMscomm1();
-	afx_msg void OnSelchangeComboPort();
-	afx_msg void OnSelchangeComboBote();
-	afx_msg void OnSelchangeComboData();
-	afx_msg void OnSelchangeComboStop();
-	afx_msg void OnSelchangeComboJiaoyan();
-	afx_msg void OnPortOpen();
-	afx_msg void OnCeshi();
+	//afx_msg void OnSelchangeComboPort();
+	//afx_msg void OnSelchangeComboBote();
+	//afx_msg void OnSelchangeComboData();
+	//afx_msg void OnSelchangeComboStop();
+	//afx_msg void OnSelchangeComboJiaoyan();
+	//afx_msg void OnPortOpen();
+	//afx_msg void OnCeshi();
 	afx_msg void OnJiantou();
 	afx_msg void OnAppExit();
+	afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
 	DECLARE_EVENTSINK_MAP()
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

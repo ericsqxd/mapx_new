@@ -15,12 +15,13 @@ class AdoAccess
 {
 public:
 		 _ConnectionPtr   m_pConnection; // Êý¾Ý¿â
-//	 _RecordsetPtr    m_pRecordset; // ÃüÁî
+	 _RecordsetPtr    m_pRecordWrite; // ÃüÁî
 	 _CommandPtr      m_pCommand; // ¼ÇÂ¼
       void OnInitADOConn();
       void ExitConnect();
 	  void Openace();
-	  void Chaxun();
+	  void Write(int id,CString strst,double lgtd,double latd,int height,int bloodshou,int bloodzh,int beat,double temper);
+	  bool Chaxun(int id,int flag);
 	AdoAccess();
 	virtual ~AdoAccess();
 

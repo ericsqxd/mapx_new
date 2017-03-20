@@ -65,6 +65,7 @@ LINK32=link.exe
 # PROP Use_Debug_Libraries 1
 # PROP Output_Dir "Debug"
 # PROP Intermediate_Dir "Debug"
+# PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /Yu"stdafx.h" /FD /GZ /c
 # ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR /Yu"stdafx.h" /FD /GZ /c
@@ -98,6 +99,18 @@ SOURCE=.\AdoAccess1.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\BarChart.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\gonglv.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\info.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\MainFrm.cpp
 # End Source File
 # Begin Source File
@@ -107,6 +120,10 @@ SOURCE=.\Mapx.cpp
 # Begin Source File
 
 SOURCE=.\mscomm.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=.\portset.cpp
 # End Source File
 # Begin Source File
 
@@ -143,6 +160,18 @@ SOURCE=.\AdoAccess1.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\BarChart.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\gonglv.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\info.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\MainFrm.h
 # End Source File
 # Begin Source File
@@ -152,6 +181,10 @@ SOURCE=.\Mapx.h
 # Begin Source File
 
 SOURCE=.\mscomm.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\portset.h
 # End Source File
 # Begin Source File
 
@@ -200,12 +233,12 @@ SOURCE=.\ReadMe.txt
 # End Source File
 # End Target
 # End Project
+# Section rescuekj2 : {648A5600-2C6E-101B-82B6-000000000014}
+# 	2:21:DefaultSinkHeaderFile:mscomm.h
+# 	2:16:DefaultSinkClass:CMSComm
+# End Section
 # Section rescuekj2 : {E6E17E90-DF38-11CF-8E74-00A0C90F26F8}
 # 	2:5:Class:CMSComm
 # 	2:10:HeaderFile:mscomm.h
 # 	2:8:ImplFile:mscomm.cpp
-# End Section
-# Section rescuekj2 : {648A5600-2C6E-101B-82B6-000000000014}
-# 	2:21:DefaultSinkHeaderFile:mscomm.h
-# 	2:16:DefaultSinkClass:CMSComm
 # End Section
