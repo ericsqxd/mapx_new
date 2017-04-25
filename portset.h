@@ -41,7 +41,7 @@ public:
 
 // Implementation
 protected:
-
+	CList <CRect,CRect> listRect;
 	// Generated message map functions
 	//{{AFX_MSG(portset)
 	afx_msg void OnButtonOpen();
@@ -50,6 +50,7 @@ protected:
 	afx_msg void OnSelchangeComboJiaoyan();
 	afx_msg void OnSelchangeComboPort();
 	afx_msg void OnSelchangeComboStop();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

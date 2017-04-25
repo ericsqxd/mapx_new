@@ -6,20 +6,51 @@
 --------------------Configuration: rescuekj2 - Win32 Debug--------------------
 </h3>
 <h3>Command Lines</h3>
-Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP6.tmp" with contents
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1B.tmp" with contents
 [
-/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /D "_MBCS" /FR"Debug/" /Fp"Debug/rescuekj2.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
-"C:\vc\±¸·Ý\rescuekj2View.cpp"
+/nologo /subsystem:windows /incremental:yes /pdb:"Debug/rescuekj2.pdb" /debug /machine:I386 /out:"Debug/rescuekj2.exe" /pdbtype:sept 
+".\Debug\add.obj"
+".\Debug\AdoAccess1.obj"
+".\Debug\BarChart.obj"
+".\Debug\gonglv.obj"
+".\Debug\info.obj"
+".\Debug\MainFrm.obj"
+".\Debug\Mapx.obj"
+".\Debug\mscomm.obj"
+".\Debug\portset.obj"
+".\Debug\rescuekj2.obj"
+".\Debug\rescuekj2Doc.obj"
+".\Debug\rescuekj2View.obj"
+".\Debug\StdAfx.obj"
+".\Debug\rescuekj2.res"
 ]
-Creating command line "cl.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP6.tmp" 
+Creating command line "link.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1B.tmp"
 <h3>Output Window</h3>
-Compiling...
-rescuekj2View.cpp
+Linking...
+Creating temporary file "C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1C.tmp" with contents
+[
+/nologo /o"Debug/rescuekj2.bsc" 
+".\Debug\StdAfx.sbr"
+".\Debug\add.sbr"
+".\Debug\AdoAccess1.sbr"
+".\Debug\BarChart.sbr"
+".\Debug\gonglv.sbr"
+".\Debug\info.sbr"
+".\Debug\MainFrm.sbr"
+".\Debug\Mapx.sbr"
+".\Debug\mscomm.sbr"
+".\Debug\portset.sbr"
+".\Debug\rescuekj2.sbr"
+".\Debug\rescuekj2Doc.sbr"
+".\Debug\rescuekj2View.sbr"]
+Creating command line "bscmake.exe @C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\RSP1C.tmp"
+Creating browse info file...
+<h3>Output Window</h3>
 
 
 
 <h3>Results</h3>
-rescuekj2View.obj - 0 error(s), 0 warning(s)
+rescuekj2.exe - 0 error(s), 0 warning(s)
 </pre>
 </body>
 </html>

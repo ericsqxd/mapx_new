@@ -2,7 +2,7 @@
 
 [General Info]
 Version=1
-LastClass=add
+LastClass=CRescuekj2View
 LastTemplate=CDialog
 NewFileInclude1=#include "stdafx.h"
 NewFileInclude2=#include "rescuekj2.h"
@@ -19,14 +19,14 @@ Class6=CRescuekj2Doc
 Class7=CRescuekj2View
 
 ResourceCount=7
-Resource1=IDD_RESCUEKJ2_FORM
-Resource2=IDD_PORT
-Resource3=IDD_DIALOG1
-Resource4=IDD_GONGLV
-Resource5=IDR_MAINFRAME
+Resource1=IDR_MAINFRAME
+Resource2=IDD_RESCUEKJ2_FORM
+Resource3=IDD_ABOUTBOX
+Resource4=IDD_PORT
+Resource5=IDD_GONGLV
 Class8=portset
 Class9=gonglv
-Resource6=IDD_ABOUTBOX
+Resource6=IDD_DIALOG1
 Class10=info
 Resource7=IDD_INFO
 
@@ -73,7 +73,7 @@ Type=0
 BaseClass=CFormView
 HeaderFile=rescuekj2View.h
 ImplementationFile=rescuekj2View.cpp
-LastObject=IDC_MSCOMM1
+LastObject=IDC_VIEW
 Filter=D
 VirtualFilter=VWC
 
@@ -94,10 +94,10 @@ Type=1
 Class=CRescuekj2View
 ControlCount=5
 Control1=IDC_MAP1,{9D6ED188-5910-11D2-98A6-00A0C9742CCA},1342242816
-Control2=IDC_EDIT_HISTORYMEG,edit,1352728644
-Control3=IDC_STATIC_HISTORY,static,1342308363
-Control4=IDC_MSCOMM1,{648A5600-2C6E-101B-82B6-000000000014},1342242816
-Control5=IDC_TAB1,SysTabControl32,1350565888
+Control2=IDC_STATIC_HISTORY,static,1342308363
+Control3=IDC_MSCOMM1,{648A5600-2C6E-101B-82B6-000000000014},1342242816
+Control4=IDC_TAB1,SysTabControl32,1350565888
+Control5=IDC_LIST1,SysListView32,1350631681
 
 [MNU:IDR_MAINFRAME]
 Type=1
@@ -114,15 +114,16 @@ Command9=ID_APP_EXIT
 Command10=IDC_VIEW
 Command11=IDC_ADD
 Command12=IDC_DELETE
-Command13=Zoom_In
-Command14=Zoom_Out
-Command15=Move_Pan
-Command16=Cen_ter
-Command17=IDC_SET
-Command18=IDC_CESHI
-Command19=IDC_JIANTOU
-Command20=ID_APP_ABOUT
-CommandCount=20
+Command13=ID_XIUGAI
+Command14=Zoom_In
+Command15=Zoom_Out
+Command16=Move_Pan
+Command17=Cen_ter
+Command18=IDC_SET
+Command19=IDC_CESHI
+Command20=IDC_JIANTOU
+Command21=ID_APP_ABOUT
+CommandCount=21
 
 [DLG:IDD_GONGLV]
 Type=1
@@ -184,7 +185,7 @@ HeaderFile=portset.h
 ImplementationFile=portset.cpp
 BaseClass=CDialog
 Filter=D
-LastObject=IDC_COMBO_STOP
+LastObject=Cen_ter
 VirtualFilter=dWC
 
 [CLS:gonglv]
@@ -194,12 +195,12 @@ ImplementationFile=gonglv.cpp
 BaseClass=CDialog
 Filter=D
 VirtualFilter=dWC
-LastObject=Cen_ter
+LastObject=gonglv
 
 [DLG:IDD_INFO]
 Type=1
 Class=info
-ControlCount=14
+ControlCount=13
 Control1=IDC_STATIC,static,1342308352
 Control2=IDC_STATIC_SHOU,static,1342308352
 Control3=IDC_STATIC,static,1342308352
@@ -211,9 +212,8 @@ Control8=IDC_STATIC_BEAT,static,1342308352
 Control9=IDC_STATIC,static,1342308352
 Control10=IDC_STATIC_PINGGU,static,1342308352
 Control11=IDC_STATIC,static,1342308352
-Control12=IDC_STATIC_ID,static,1342308352
-Control13=IDC_STATIC,static,1342308352
-Control14=IDC_STATIC_NAME,static,1342308352
+Control12=IDC_STATIC_NAME,static,1342308352
+Control13=IDC_BUTTON1,button,1342242816
 
 [CLS:info]
 Type=0
@@ -222,7 +222,7 @@ ImplementationFile=info.cpp
 BaseClass=CDialog
 Filter=D
 VirtualFilter=dWC
-LastObject=Cen_ter
+LastObject=IDC_VIEW
 
 [DLG:IDD_DIALOG1]
 Type=1

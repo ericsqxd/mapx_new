@@ -54,6 +54,7 @@ BEGIN_MESSAGE_MAP(portset, CDialog)
 	ON_CBN_SELCHANGE(IDC_COMBO_JIAOYAN, OnSelchangeComboJiaoyan)
 	ON_CBN_SELCHANGE(IDC_COMBO_PORT, OnSelchangeComboPort)
 	ON_CBN_SELCHANGE(IDC_COMBO_STOP, OnSelchangeComboStop)
+	ON_WM_SIZE()
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -77,7 +78,7 @@ void portset::OnButtonOpen()
 					UpdateData(FALSE);//更新按键状态
 					break;
 			case 0://当前串口是关闭的则进行开串口操作
-					spp->m_ctrlComm.SetCommPort(1);//如果要打开串口则应先选择哪个串口
+					spp->m_ctrlComm.SetCommPort(7);//如果要打开串口则应先选择哪个串口
 					spp->m_ctrlComm.SetPortOpen(TRUE);//打开串口
 					SetDlgItemText(IDC_BUTTON_OPEN,"关闭串口");//更改按键指示
 					UpdateData(FALSE);
@@ -110,9 +111,9 @@ void portset::OnButtonOpen()
 			}
 		}
 	if(m_Index<0)
-		((CComboBox*)GetDlgItem(IDC_COMBO_PORT))->SetCurSel(0);//如果没有另外进行串口选择则显示COM1
+		((CComboBox*)GetDlgItem(IDC_COMBO_PORT))->SetCurSel(2);//如果没有另外进行串口选择则显示COM1
 	if(m_BaudRate<0)
-		((CComboBox*)GetDlgItem(IDC_COMBO_BOTE))->SetCurSel(3);//如果没有另外进行波特率选择则显示9600
+		((CComboBox*)GetDlgItem(IDC_COMBO_BOTE))->SetCurSel(5);//如果没有另外进行波特率选择则显示9600
 	if(m_Date_Select<0)
 		((CComboBox*)GetDlgItem(IDC_COMBO_DATA))->SetCurSel(0);////如果没有另外进行数据位选择则显示8
 	if(m_StopBit<0)
@@ -246,8 +247,8 @@ UpdateData(false);
 
 void portset::Oninitial()
 {
-	m_ComboBox.SetCurSel(0);//打开软件时串口选择框默认显示COM1	
-	m_BaudRate_M.SetCurSel(3);//打开软件时波特率选择框默认显示9600
+	m_ComboBox.SetCurSel(6);//打开软件时串口选择框默认显示COM7	
+	m_BaudRate_M.SetCurSel(7);//打开软件时波特率选择框默认显示9600
 	m_Date_Select_M.SetCurSel(0);//打开软件时数据位选择框默认显示8
 	m_StopBit_M.SetCurSel(0);//打开软件时停止位选择框默认显示1
 	m_ParityCheck_M.SetCurSel(0);//打开软件时奇偶校验选择框默认显示无校验N
@@ -258,7 +259,8 @@ void portset::Oninitial()
 		{
 			spp->m_ctrlComm.SetPortOpen(FALSE);//关闭串口
 		}		
-	spp->m_ctrlComm.SetCommPort(1);//打开软件时默认使用COM1串口
+	spp->m_ctrlComm.SetCommPort(7);//打开软件时默认使用COM1串口
+	spp->m_ctrlComm.SetInBufferSize(1024); //接收缓冲区
 	if(!spp->m_ctrlComm.GetPortOpen())
 		{
 		spp->m_ctrlComm.SetPortOpen(TRUE);//打开串口
@@ -268,13 +270,64 @@ void portset::Oninitial()
 		AfxMessageBox("cannot open serial port");
 		}
 			//默认设置打开
-	spp->m_ctrlComm.SetSettings("9600,n,8,1");//打开软件时端口设置默认为波特率9600，无校验位，8位数据，1位停止位
+
+	spp->m_ctrlComm.SetSettings("57600,n,8,1");//打开软件时端口设置默认为波特率9600，无校验位，8位数据，1位停止位
 	spp->m_ctrlComm.SetInputMode(1); //1：表示以二进制方式检取数据
-	spp->m_ctrlComm.SetRThreshold(1); //参数1表示每当串口接收缓冲区中有多于或等于1个字符时将引发一个接收数据的OnComm事件
+	spp->m_ctrlComm.SetRThreshold(21); //参数1表示每当串口接收缓冲区中有多于或等于1个字符时将引发一个接收数据的OnComm事件
 	spp->m_ctrlComm.SetInputLen(0); //设置当前接收区数据长度为0
 	spp->m_ctrlComm.GetInput();//先预读缓冲区以清除残留数据
 
 	SetDlgItemText(IDC_BUTTON_OPEN,"关闭串口");
 
+	/******   控件获取开始    *******/
+	CRect rectWnd;
+    GetWindowRect(&rectWnd);//得到当前对话框的坐标
+    listRect.AddTail(&rectWnd);//将坐标添加到链表listRect的末尾
+    CWnd *pWndChild=GetWindow(GW_CHILD);
+    while (pWndChild)//依次得到对话框上控件的坐标，并将所有的控件坐标存储在链表中
+	{
+        pWndChild->GetWindowRect(&rectWnd);
+        listRect.AddTail(&rectWnd);//由于依次将控件坐标添加到链表末尾，所以开头的坐标是对话框的坐标
+        pWndChild=pWndChild->GetNextWindow();
+	}
+	
+	/******   控件获取到此结束    *******/
+}
 
+void portset::OnSize(UINT nType, int cx, int cy) 
+{
+	CDialog::OnSize(nType, cx, cy);
+	//AfxMessageBox("jjsjsj");
+	// TODO: Add your message handler code here
+	if(listRect.GetCount()>0)//看链表是否为空
+	{
+		CRect rectDlgNow;
+		GetWindowRect(&rectDlgNow);//得到当前对话框的坐标
+		POSITION mp=listRect.GetHeadPosition();//取得存储在链表中的头元素，其实就是前边的对话框坐标
+		CRect rectDlgSaved;
+		rectDlgSaved=listRect.GetNext(mp);
+		ScreenToClient(rectDlgNow);
+		float fRateScaleX=(float)(rectDlgNow.right-rectDlgNow.left)/(rectDlgSaved.right-rectDlgSaved.left);//拖拉后的窗口大小与原来窗口大小的比例
+		float fRateScaleY=(float)(rectDlgNow.bottom-rectDlgNow.top)/(rectDlgSaved.bottom-rectDlgSaved.top);
+		ClientToScreen(rectDlgNow);
+		CRect rectChildSaved;
+		CWnd *pWndChild=GetWindow(GW_CHILD);
+		
+		CRect rc;
+		
+		CString strtmp;
+		//当前处理缩放控件的TAB值
+		while (pWndChild)
+		{
+			rectChildSaved=listRect.GetNext(mp);
+			rectChildSaved.left=rectDlgNow.left+(int)((rectChildSaved.left-rectDlgSaved.left)*fRateScaleX);
+			rectChildSaved.top=rectDlgNow.top+(int)((rectChildSaved.top-rectDlgSaved.top)*fRateScaleY);
+			rectChildSaved.right=rectDlgNow.right+(int)((rectChildSaved.right-rectDlgSaved.right)*fRateScaleX);
+			rectChildSaved.bottom=rectDlgNow.bottom+(int)((rectChildSaved.bottom-rectDlgSaved.bottom)*fRateScaleY);
+			ScreenToClient(rectChildSaved);
+			pWndChild->MoveWindow(rectChildSaved);
+			pWndChild = pWndChild->GetNextWindow();
+		}
+	}
+        Invalidate(); //强制重绘窗口
 }

@@ -12,11 +12,11 @@
 #define IDD_PORT                        133
 #define IDD_GONGLV                      135
 #define IDD_INFO                        137
+#define IDR_WAVE1                       140
 #define IDC_EDIT1_ID                    1000
 #define IDC_EDIT2_NAME                  1001
 #define IDC_EDIT3_GROUP                 1004
 #define IDC_EDIT4_JOB                   1005
-#define IDC_EDIT_HISTORYMEG             1008
 #define IDC_STATIC_HISTORY              1009
 #define IDC_STATIC_HAO                  1034
 #define IDC_COMBO_PORT                  1046
@@ -48,6 +48,8 @@
 #define IDC_EDIT_PHONE3                 1083
 #define IDC_EDIT_PHONE4                 1084
 #define IDC_EDIT_PHONE5                 1085
+#define IDC_LIST1                       1086
+#define IDC_BUTTON1                     1088
 #define Move_Pan                        32771
 #define Zoom_In                         32772
 #define Zoom_Out                        32773
@@ -58,15 +60,17 @@
 #define IDC_SET                         32787
 #define IDC_CESHI                       32788
 #define IDC_JIANTOU                     32792
+#define ID_MENUITEM32793                32793
+#define ID_XIUGAI                       32793
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        138
-#define _APS_NEXT_COMMAND_VALUE         32793
-#define _APS_NEXT_CONTROL_VALUE         1086
+#define _APS_NEXT_RESOURCE_VALUE        141
+#define _APS_NEXT_COMMAND_VALUE         32794
+#define _APS_NEXT_CONTROL_VALUE         1089
 #define _APS_NEXT_SYMED_VALUE           104
 #endif
 #endif

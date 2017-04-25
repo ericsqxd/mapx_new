@@ -5,7 +5,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 // info.h : header file
-//
+
+//#include "rescuekj2View.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // info dialog
@@ -21,7 +22,6 @@ public:
 	//{{AFX_DATA(info)
 	enum { IDD = IDD_INFO };
 	CStatic	m_showname;
-	CStatic	m_showid;
 	CStatic	m_temper;
 	CStatic	m_bloodshu;
 	CStatic	m_bloodshou;
@@ -39,10 +39,12 @@ public:
 
 // Implementation
 protected:
-
+	int cid;
+	CList <CRect,CRect> listRect;
 	// Generated message map functions
 	//{{AFX_MSG(info)
-		// NOTE: the ClassWizard will add member functions here
+	afx_msg void OnButton1();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

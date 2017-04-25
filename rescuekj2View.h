@@ -26,15 +26,18 @@ class CRescuekj2View : public CFormView
 protected: // create from serialization only
 	CRescuekj2View();
 	DECLARE_DYNCREATE(CRescuekj2View)
-	void biaodian(double y, double x);
+	void biaodian(int id,double y, double x);
 	void guiji_initial(int id,double y0,double x0,double y1,double x1);
 	void guiji(int id,double y,double x,double yg,double xg);
+	void List_Initial();
 public:
+	//int cishu;
 	BOOL m_bFlash;
 	portset m_page1; 
 	gonglv m_page2; 
 	info m_page3;
 	int book[50];
+	int num;
 	struct dian
 	{
 		double y;
@@ -42,8 +45,8 @@ public:
 	}pre[50];
 	//{{AFX_DATA(CRescuekj2View)
 	enum { IDD = IDD_RESCUEKJ2_FORM };
+	CListCtrl	m_List1;
 	CTabCtrl	m_tab;
-	CString	m_strRXData;
 	//}}AFX_DATA
 // Attributes
 
@@ -77,6 +80,7 @@ protected:
 		CMapX m_ctrlMapX;
 		CList <CRect,CRect> listRect;
 		CMapXFeature xt;
+		CMapXFeatures all,alltr;
 		CMapXLayer lyr,m_traceLayer;
 		//double yg,xg,x,y;
 		AdoAccess myAccess;
@@ -92,16 +96,14 @@ protected:
 	afx_msg void OnTimer(UINT nIDEvent);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnCommMscomm1();
-	//afx_msg void OnSelchangeComboPort();
-	//afx_msg void OnSelchangeComboBote();
-	//afx_msg void OnSelchangeComboData();
-	//afx_msg void OnSelchangeComboStop();
-	//afx_msg void OnSelchangeComboJiaoyan();
-	//afx_msg void OnPortOpen();
-	//afx_msg void OnCeshi();
 	afx_msg void OnJiantou();
 	afx_msg void OnAppExit();
+	afx_msg LRESULT OnMyMessage(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnSelchangeTab(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnCeshi(int id);
+	afx_msg void OnXiugai();
+	afx_msg void OnDelete();
+	afx_msg void OnView();
 	DECLARE_EVENTSINK_MAP()
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

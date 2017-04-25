@@ -25,7 +25,7 @@ public:
 	CRescuekj2App();
 	 _RecordsetPtr    m_pRecordset; // √¸¡Ó
 	 CMSComm	m_ctrlComm;
-	 CString strname;
+	 CString strname,str_status,str_phone1,str_phone2;
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CRescuekj2App)

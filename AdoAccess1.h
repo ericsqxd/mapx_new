@@ -21,7 +21,8 @@ public:
       void ExitConnect();
 	  void Openace();
 	  void Write(int id,CString strst,double lgtd,double latd,int height,int bloodshou,int bloodzh,int beat,double temper);
-	  bool Chaxun(int id,int flag);
+	  bool Chaxun(int id);
+	  void show_rescue(int id);
 	AdoAccess();
 	virtual ~AdoAccess();
 

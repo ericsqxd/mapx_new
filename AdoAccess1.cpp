@@ -50,11 +50,11 @@ void AdoAccess::Openace()
 		app->m_pRecordset->Open(_variant_t(strTableName),m_pConnection.GetInterfacePtr(),adOpenDynamic,adLockOptimistic,adCmdTable);
 }
 
-bool AdoAccess::Chaxun(int id,int flag)
+bool AdoAccess::Chaxun(int id)
 {
 		_variant_t   var;
 		CRescuekj2App *app = (CRescuekj2App *)AfxGetApp();
-		CString strid,strunit,strposition,info,strtmp;
+		CString strtmp;
 		int cid;
 		try
 		 {
@@ -71,25 +71,11 @@ bool AdoAccess::Chaxun(int id,int flag)
 			var = app->m_pRecordset->GetCollect("ID");
 			cid=_ttoi((LPCTSTR)(_bstr_t)var);
 			if(cid!=id)
-				app->m_pRecordset->MoveNext();
-			else
 			{
-				if(flag==0)
-				{
-					var = app->m_pRecordset->GetCollect("NAME");
-					if(var.vt != VT_NULL)
-						app->strname = (LPCSTR)_bstr_t(var);
-					var = app->m_pRecordset->GetCollect("UNIT");
-					if(var.vt != VT_NULL)
-						strunit = (LPCSTR)_bstr_t(var);
-					var = app->m_pRecordset->GetCollect("POSITION");
-					if(var.vt != VT_NULL)
-						strposition = (LPCSTR)_bstr_t(var);
-					info.Format(_T("收到求救信号来自：\nID: %d\n姓名:%s\n单位:%s\n职务:%s\n"),cid,app->strname,strunit,strposition);
-					AfxMessageBox(info);
-				}
-				return true;
+				app->m_pRecordset->MoveNext();
+				continue;
 			}
+			return true;
 		  }
 		if(app->m_pRecordset->adoEOF==NULL)
 		{
@@ -139,4 +125,55 @@ AdoAccess::AdoAccess()
 AdoAccess::~AdoAccess()
 {
 
+}
+
+
+void AdoAccess::show_rescue(int id)
+{
+	_variant_t   var;
+	CRescuekj2App *app = (CRescuekj2App *)AfxGetApp();
+	CString strid,strunit,strposition,info,strtmp,strsex,strage;
+	int cid;
+	if(!app->m_pRecordset->BOF)
+		app->m_pRecordset->MoveFirst();
+	while(!app->m_pRecordset->adoEOF)
+		{
+			  var = app->m_pRecordset->GetCollect("ID");
+			  cid=_ttoi((LPCTSTR)(_bstr_t)var);
+			  if(cid!=id)
+			  {
+				app->m_pRecordset->MoveNext();
+				continue;
+			  }
+			  break;
+		}
+		var = app->m_pRecordset->GetCollect("NAME");
+		if(var.vt != VT_NULL)
+			app->strname = (LPCSTR)_bstr_t(var);
+		var = app->m_pRecordset->GetCollect("UNIT");
+		if(var.vt != VT_NULL)
+				strunit = (LPCSTR)_bstr_t(var);
+			
+		var = app->m_pRecordset->GetCollect("SEX");
+		if(var.vt != VT_NULL)
+				strsex = (LPCSTR)_bstr_t(var);
+			
+		var = app->m_pRecordset->GetCollect("AGE");
+		if(var.vt != VT_NULL)
+				strage = (LPCSTR)_bstr_t(var);
+			
+		var = app->m_pRecordset->GetCollect("PHONE1");
+		if(var.vt != VT_NULL)
+				app->str_phone1 = (LPCSTR)_bstr_t(var);
+			
+		var = app->m_pRecordset->GetCollect("PHONE4");
+		if(var.vt != VT_NULL)
+				app->str_phone2 = (LPCSTR)_bstr_t(var);
+			
+		var = app->m_pRecordset->GetCollect("POSITION");
+		if(var.vt != VT_NULL)
+				strposition = (LPCSTR)_bstr_t(var);
+		info.Format(_T("ID: %d       姓名:%s\n性别:%s         年龄:%s\n单位:%s\n职务:%s\n"),cid,app->strname,strsex,strage,strunit,strposition);
+			//AfxMessageBox(info);
+		MessageBox(NULL,info,"求救信息",0);
 }

@@ -83,6 +83,8 @@ BOOL CMainFrame::PreCreateWindow(CREATESTRUCT& cs)
 
      cs.style&= ~(LONG) FWS_ADDTOTITLE;
      return CFrameWnd::PreCreateWindow(cs);
+	 //cs.style=WS_OVERLAPPEDWINDOW;     //这个不能缺少
+	 //cs.lpszName= "搜救系统";   //标题文字
 
 	return TRUE;
 }

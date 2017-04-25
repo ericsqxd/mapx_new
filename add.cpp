@@ -19,18 +19,18 @@ add::add(CWnd* pParent /*=NULL*/)
 	: CDialog(add::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(add)
-	m_edit_id = _T("");
-	m_edit_name = _T("");
-	m_edit_group = _T("");
-	m_edit_job = _T("");
-	m_edit_age = _T("");
-	m_edit_sex = _T("");
-	m_edit_xuexing = _T("");
-	m_edit_phone1 = _T("");
-	m_edit_phone2 = _T("");
-	m_edit_phone3 = _T("");
-	m_edit_phone4 = _T("");
-	m_edit_phone5 = _T("");
+	m_edit_id = _T("6");
+	m_edit_name = _T("王晨屹");
+	m_edit_group = _T("解放军理工大学通信工程学院学员大队二营四连");
+	m_edit_job = _T("连长");
+	m_edit_age = _T("21");
+	m_edit_sex = _T("男");
+	m_edit_xuexing = _T("B");
+	m_edit_phone1 = _T("15050592558");
+	m_edit_phone2 = _T("18284507837");
+	m_edit_phone3 = _T("15196460691");
+	m_edit_phone4 = _T("829526");
+	m_edit_phone5 = _T("829001");
 	//}}AFX_DATA_INIT
 }
 

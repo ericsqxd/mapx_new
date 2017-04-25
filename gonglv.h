@@ -34,9 +34,10 @@ public:
 // Implementation
 protected:
 	CBarChart	m_chart;
+	CList <CRect,CRect> listRect;
 	// Generated message map functions
 	//{{AFX_MSG(gonglv)
-	afx_msg void OnButton_gonglv();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 };

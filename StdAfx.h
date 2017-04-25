@@ -9,6 +9,8 @@
 #include <afxtempl.h>
 #import "C://Program Files//Common Files//System//ado//msado15.dll"  no_namespace   rename("EOF", "adoEOF")
 
+ #define WM_MY_MESSAGE  (WM_USER+200)
+
 #if _MSC_VER > 1000
 #pragma once
 #endif // _MSC_VER > 1000
